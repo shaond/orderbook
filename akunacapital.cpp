@@ -31,6 +31,37 @@ void modify(string id, string type, int price, int quantity);
 void cancel(string id);
 void print_orders();
 
+enum class order_t { BUY, SELL };
+enum class subtype_t { GFD, IOC };
+
+class Order {
+ private:
+  string id_;
+  time_t time_;
+  order_t type_;
+  subtype_t subtype_;
+  int price_;
+  int quantity_;
+
+ public:
+  Order(string id, order_t type, subtype_t subtype, int price, int quantity);
+  ~Order();
+};
+
+Order::Order(string id, order_t type, subtype_t subtype, int price,
+             int quantity)
+    : id_{id},
+      type_{type},
+      subtype_{subtype},
+      price_{price},
+      quantity_{quantity} {
+  time_ = time(nullptr);
+}
+
+Order::~Order() {
+  // Destructor.
+}
+
 void buy(string type, int price, int quantity, string id) {
   // Input with price <= 0, quantity <= 0 or missing order ID should
   // be ignored.
@@ -84,8 +115,6 @@ void process_instruction(string instruction) {
     cancel(id);
   } else if (ins == "PRINT") {
     print_orders();
-  } else {
-    // TODO handle invalid instruction.
   }
 }
 
