@@ -23,25 +23,39 @@
 
 using namespace std;
 
-// Buy type, which can either be -
+// Order type, which can either be:
 // IOC: Insert or cancel,
 // GFD: Good for the day.
-enum class buy_t { IOC, GFD };
+enum class order_t { IOC, GFD };
 
-// Order type, represents either a BUY or a SELL.
-enum class order_t { BUY, SELL };
+// Buy type, can only be either a BUY or SELL.
+enum class buy_t { BUY, SELL };
 
 // Function prototypes.
 void process_instruction(string instruction);
-bool buy(buy_t type, int price, int quantity, string order_id);
-bool sell(buy_t type, int price, int quantity, string order_id);
+bool buy(order_t type, int price, int quantity, string order_id);
+bool sell(order_t type, int price, int quantity, string order_id);
 bool cancel(string order_id);
-bool modify(string order_id, order_t type, int price, int quantity);
+bool modify(string order_id, buy_t type, int price, int quantity);
 void print_orders();
 
 void process_instruction(string instruction) {
   // Process instructions in sequential order.
-  cout << instruction << endl;
+  string ins, tmp;
+  stringstream ss(instruction);
+
+  // Get the execution statement e.g. BUY/SELL/MODIFY etc.
+  ss >> ins;
+
+  if (ins == "BUY") {
+    cout << "It's a buy" << endl;
+    while (ss >> tmp) {
+      cout << tmp;
+    }
+  }
+  if (ins == "SELL") {
+    cout << "It's a SELL" << endl;
+  }
 }
 
 int main() {
