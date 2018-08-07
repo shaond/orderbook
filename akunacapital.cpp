@@ -47,27 +47,37 @@ void sell(string type, int price, int quantity, string id) {
   cout << type << " " << price << " " << quantity << " " << id << endl;
 }
 
+void modify(string id, string type, int price, int quantity) {
+  cout << id << " " << type << " " << price << " " << quantity << endl;
+}
+
+void cancel(string id) { cout << id << " " << endl; }
+
 void process_instruction(string instruction) {
   // Process instructions in sequential order.
-  string ins;
+  string ins{};
+  string type{};
+  string id{};
+  int price{0};
+  int quantity{0};
   stringstream ss(instruction);
 
-  // Get the execution statement e.g. BUY/SELL/MODIFY etc.
+  // Get our instruction e.g. BUY/SELL/MODIFY etc.
   ss >> ins;
 
   // TODO optimise into a switch statement.
   if (ins == "BUY") {
-    string type, id;
-    int price, quantity;
     ss >> type >> price >> quantity >> id;
     buy(type, price, quantity, id);
   } else if (ins == "SELL") {
-    string type, id;
-    int price, quantity;
     ss >> type >> price >> quantity >> id;
     sell(type, price, quantity, id);
   } else if (ins == "MODIFY") {
+    ss >> id >> type >> price >> quantity;
+    modify(id, type, price, quantity);
   } else if (ins == "CANCEL") {
+    ss >> id;
+    cancel(id);
   } else if (ins == "PRINT") {
   } else {
     // TODO handle invalid instruction.
