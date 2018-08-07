@@ -23,24 +23,33 @@
 
 using namespace std;
 
-class Order {
- private:
- public:
-};
+// Buy type, which can either be -
+// IOC: Insert or cancel,
+// GFD: Good for the day.
+enum class buy_t { IOC, GFD };
 
-void processOrder(string instruction);
+// Order type, represents either a BUY or a SELL.
+enum class order_t { BUY, SELL };
 
-void processOrder(string instruction) {
-  // Process our order in sequence.
+// Function prototypes.
+void process_instruction(string instruction);
+bool buy(buy_t type, int price, int quantity, string order_id);
+bool sell(buy_t type, int price, int quantity, string order_id);
+bool cancel(string order_id);
+bool modify(string order_id, order_t type, int price, int quantity);
+void print_orders();
+
+void process_instruction(string instruction) {
+  // Process instructions in sequential order.
   cout << instruction << endl;
 }
 
 int main() {
-  // Continously listen for instructions.
+  // Continously listen and process instructions.
   while (true) {
     string instruction;
     getline(cin, instruction);
-    processOrder(instruction);
+    process_instruction(instruction);
   }
 
   return 0;
