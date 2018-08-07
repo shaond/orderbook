@@ -23,14 +23,6 @@
 
 using namespace std;
 
-// Order type, which can either be:
-// IOC: Insert or cancel,
-// GFD: Good for the day.
-enum class order_t { IOC, GFD };
-
-// Buy type, can only be either a BUY or SELL.
-enum class buy_t { BUY, SELL };
-
 // Function prototypes.
 void process_instruction(string instruction);
 void buy(string type, int price, int quantity, string id);
@@ -40,10 +32,20 @@ void cancel(string id);
 void print_orders();
 
 void buy(string type, int price, int quantity, string id) {
+  // Input with price <= 0, quantity <= 0 or missing order ID should
+  // be ignored.
+  if ((price <= 0) || (quantity <= 0)) return;
+  if (id == "") return;
+
   cout << type << " " << price << " " << quantity << " " << id << endl;
 }
 
 void sell(string type, int price, int quantity, string id) {
+  // Input with price <= 0, quantity <= 0 or missing order ID should
+  // be ignored.
+  if ((price <= 0) || (quantity <= 0)) return;
+  if (id == "") return;
+
   cout << type << " " << price << " " << quantity << " " << id << endl;
 }
 
@@ -52,6 +54,8 @@ void modify(string id, string type, int price, int quantity) {
 }
 
 void cancel(string id) { cout << id << " " << endl; }
+
+void print_orders() { cout << "Print all our orders here..." << endl; }
 
 void process_instruction(string instruction) {
   // Process instructions in sequential order.
@@ -79,6 +83,7 @@ void process_instruction(string instruction) {
     ss >> id;
     cancel(id);
   } else if (ins == "PRINT") {
+    print_orders();
   } else {
     // TODO handle invalid instruction.
   }
