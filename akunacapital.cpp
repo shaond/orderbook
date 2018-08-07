@@ -54,13 +54,19 @@ Order::Order(string id, order_t type, subtype_t subtype, int price,
       type_{type},
       subtype_{subtype},
       price_{price},
-      quantity_{quantity} {
-  time_ = time(nullptr);
-}
+      quantity_{quantity},
+      time_{time(nullptr)} {}
 
 Order::~Order() {
   // Destructor.
 }
+
+// Our orderbook is stored in an unordered_map.
+unordered_map<string, Order> orderbook;
+
+// Queues for holding pointers to our orders.
+queue<Order*> buyq;
+queue<Order*> sellq;
 
 void buy(string type, int price, int quantity, string id) {
   // Input with price <= 0, quantity <= 0 or missing order ID should
