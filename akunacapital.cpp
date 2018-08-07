@@ -39,9 +39,7 @@ int main() {
   // Continously listen for instructions.
   while (true) {
     string instruction;
-    cin.ignore();
-    getline(cin, instruction, ' ');
-    cout << instruction << endl;
+    getline(cin, instruction);
     processOrder(instruction);
   }
 
