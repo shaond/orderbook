@@ -33,28 +33,44 @@ enum class buy_t { BUY, SELL };
 
 // Function prototypes.
 void process_instruction(string instruction);
-bool buy(order_t type, int price, int quantity, string order_id);
-bool sell(order_t type, int price, int quantity, string order_id);
-bool cancel(string order_id);
-bool modify(string order_id, buy_t type, int price, int quantity);
+void buy(string type, int price, int quantity, string id);
+void sell(string type, int price, int quantity, string id);
+void modify(string id, string type, int price, int quantity);
+void cancel(string id);
 void print_orders();
+
+void buy(string type, int price, int quantity, string id) {
+  cout << type << " " << price << " " << quantity << " " << id << endl;
+}
+
+void sell(string type, int price, int quantity, string id) {
+  cout << type << " " << price << " " << quantity << " " << id << endl;
+}
 
 void process_instruction(string instruction) {
   // Process instructions in sequential order.
-  string ins, tmp;
+  string ins;
   stringstream ss(instruction);
 
   // Get the execution statement e.g. BUY/SELL/MODIFY etc.
   ss >> ins;
 
+  // TODO optimise into a switch statement.
   if (ins == "BUY") {
-    cout << "It's a buy" << endl;
-    while (ss >> tmp) {
-      cout << tmp;
-    }
-  }
-  if (ins == "SELL") {
-    cout << "It's a SELL" << endl;
+    string type, id;
+    int price, quantity;
+    ss >> type >> price >> quantity >> id;
+    buy(type, price, quantity, id);
+  } else if (ins == "SELL") {
+    string type, id;
+    int price, quantity;
+    ss >> type >> price >> quantity >> id;
+    sell(type, price, quantity, id);
+  } else if (ins == "MODIFY") {
+  } else if (ins == "CANCEL") {
+  } else if (ins == "PRINT") {
+  } else {
+    // TODO handle invalid instruction.
   }
 }
 
