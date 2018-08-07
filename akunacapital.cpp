@@ -28,15 +28,20 @@ class Order {
  public:
 };
 
-void processOrder(std::string instruction);
+void processOrder(string instruction);
 
-void processOrder(std::string instruction) { cout << instruction; }
+void processOrder(string instruction) {
+  // Process our order in sequence.
+  cout << instruction << endl;
+}
 
 int main() {
-  std::string instruction;
-
+  // Continously listen for instructions.
   while (true) {
-    cin >> instruction;
+    string instruction;
+    cin.ignore();
+    getline(cin, instruction, ' ');
+    cout << instruction << endl;
     processOrder(instruction);
   }
 
