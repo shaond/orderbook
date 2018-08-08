@@ -15,6 +15,18 @@
     "type_traits": "cpp",
     "utility": "cpp",
     "__locale": "cpp",
-    "locale": "cpp"
+    "locale": "cpp",
+    "unordered_map": "cpp",
+    "map": "cpp",
+    "__bit_reference": "cpp",
+    "__split_buffer": "cpp",
+    "deque": "cpp",
+    "initializer_list": "cpp",
+    "iterator": "cpp",
+    "list": "cpp",
+    "set": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "vector": "cpp"
   }
 }

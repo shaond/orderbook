@@ -82,6 +82,7 @@ class Orderbook final {
   static void modify(string order_id, bool isbuy, int price, int quantity);
   static void cancel(string order_id);
   static void print();
+  static void debug();
 };
 
 // Initialise our static member variables.
@@ -127,6 +128,13 @@ void Orderbook::print() {
   }
 }
 
+void Orderbook::debug() {
+  for (auto itr = orders_.begin(); itr != orders_.end(); ++itr) {
+    cout << itr->first << endl;
+    cout << itr->second << endl;
+  }
+}
+
 // Overload the output stream operator, so we can print the Orderbook.
 ostream &operator<<(ostream &out, Orderbook &book) { return out; }
 
@@ -161,6 +169,8 @@ void ProcessInstruction(string instruction) {
     Orderbook::cancel(id);
   } else if (ins == "PRINT") {
     Orderbook::print();
+  } else if (ins == "DEBUG") {
+    Orderbook::debug();
   }
 }
 
