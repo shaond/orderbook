@@ -57,6 +57,7 @@ Order::~Order() {}
 
 // Output stream operator overload for the `Order` class.
 ostream &operator<<(ostream &out, Order &order) {
+  out << "Is buy: " << order.isbuy_ << endl;
   out << "OrderId: " << order.id_ << endl;
   out << "Price: " << order.price_ << endl;
   out << "Quantity: " << order.quantity_ << endl;
@@ -112,7 +113,7 @@ void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
 
 void Orderbook::modify(string order_id, bool isbuy, int price, int quantity) {}
 
-void Orderbook::cancel(string order_id) {}
+void Orderbook::cancel(string order_id) { orders_.erase(order_id); }
 
 void Orderbook::print() {
   cout << "SELL:" << endl;
