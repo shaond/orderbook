@@ -85,11 +85,16 @@ class OrderBook final {
  public:
   static void buy(string id, shared_ptr<Order> order);
   static void sell(string id, shared_ptr<Order> order);
-  static void remove(string id);
 };
+
+// Initialise our static members from the OrderBook class.
+unordered_map<string, shared_ptr<Order>> OrderBook::orderbook_;
+queue<shared_ptr<Order>> OrderBook::buyq_;
+queue<shared_ptr<Order>> OrderBook::sellq_;
 
 void OrderBook::buy(string id, shared_ptr<Order> order) {
   // Add our order to the OrderBook and our buy/sell queues.
+  OrderBook::buyq_.push(order);
 }
 
 void buy_order(string type, int price, int quantity, string id) {
@@ -113,7 +118,7 @@ void buy_order(string type, int price, int quantity, string id) {
       make_shared<Order>(id, order_t::BUY, subtype, price, quantity);
 
   // Add `Order` to our OrderBook.
-  OrderBook::insert_buy(id, ord);
+  OrderBook::buy(id, ord);
 }
 
 void sell_order(string type, int price, int quantity, string id) {
