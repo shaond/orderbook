@@ -101,13 +101,31 @@ void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
   Orderbook::buys_[price] += quantity;
 }
 
-void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {}
+void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
+  Order *order = new Order{order_id, false, isgfd, price, quantity};
+  Orderbook::orders_.insert(make_pair(order_id, *order));
+
+  // Add our price to the sells_ map.
+  Orderbook::sells_[price] += quantity;
+}
 
 void Orderbook::modify(string order_id, bool isbuy, int price, int quantity) {}
 
 void Orderbook::cancel(string order_id) {}
 
-void Orderbook::print() {}
+void Orderbook::print() {
+  cout << "SELL:" << endl;
+  for (auto itr = Orderbook::sells_.rbegin(); itr != Orderbook::sells_.rend();
+       ++itr) {
+    cout << itr->first << " " << itr->second << endl;
+  }
+  // Iterate over our buys.
+  cout << "BUY:" << endl;
+  for (auto itr = Orderbook::buys_.rbegin(); itr != Orderbook::buys_.rend();
+       ++itr) {
+    cout << itr->first << " " << itr->second << endl;
+  }
+}
 
 // Overload the output stream operator, so we can print the Orderbook.
 ostream &operator<<(ostream &out, Orderbook &book) { return out; }
