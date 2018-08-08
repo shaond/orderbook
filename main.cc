@@ -27,10 +27,9 @@ using namespace std;
 // Function prototypes.
 void ProcessInstruction(string instruction);
 
-class Order {
+struct Order {
   friend ostream &operator<<(ostream &out, Order &order);
 
- private:
   string id_;
   bool isbuy_;
   bool isgfd_;
@@ -38,7 +37,6 @@ class Order {
   int quantity_;
   time_t time_;
 
- public:
   Order(string id, bool isbuy, bool isgfd, int price, int quantity);
   ~Order();
 };
@@ -113,12 +111,21 @@ void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
 
 void Orderbook::modify(string order_id, bool isbuy, int price, int quantity) {}
 
-void Orderbook::cancel(string order_id) { orders_.erase(order_id); }
+void Orderbook::cancel(string order_id) {
+  Order ord = orders_.find(order_id)->second;
+
+  if (ord.isbuy_) {
+    buys_[ord.price_] -= ord.quantity_;
+  } else {
+    sells_[ord.price_] -= ord.quantity_;
+  }
+
+  orders_.erase(order_id);
+}
 
 void Orderbook::print() {
   cout << "SELL:" << endl;
-  for (auto itr = Orderbook::sells_.rbegin(); itr != Orderbook::sells_.rend();
-       ++itr) {
+  for (auto itr = sells_.rbegin(); itr != sells_.rend(); ++itr) {
     cout << itr->first << " " << itr->second << endl;
   }
   // Iterate over our buys.
