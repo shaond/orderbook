@@ -107,6 +107,11 @@ void OrderBook::sell(string id, shared_ptr<Order> order) {
 
 void OrderBook::print() {
   // Print out our OrderBook.
+  unordered_map<string, shared_ptr<Order>>::iterator itr;
+
+  for (itr = orderbook_.begin(); itr != orderbook_.end(); ++itr) {
+    cout << *(itr->second) << endl;
+  }
 }
 
 void buy_order(string type, int price, int quantity, string id) {
