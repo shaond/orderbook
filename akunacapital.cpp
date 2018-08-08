@@ -74,24 +74,22 @@ ostream &operator<<(ostream &out, Order &order) {
   return out;
 }
 
-// OrderBook singleton class holds
+// OrderBook data structure class holds
 // all our orders.
 class OrderBook final {
  private:
-  unordered_map<string, Order *> orderbook_;
-  queue<Order *> buyq_;
-  queue<Order *> sellq_;
+  static unordered_map<string, shared_ptr<Order>> orderbook_;
+  static queue<shared_ptr<Order>> buyq_;
+  static queue<shared_ptr<Order>> sellq_;
 
  public:
-  static void buy(string id, Order *order);
-  static void sell(string id, Order *order);
-  static Order *get(string order_id);
-  static void print();
+  static void buy(string id, shared_ptr<Order> order);
+  static void sell(string id, shared_ptr<Order> order);
+  static void remove(string id);
 };
 
-void OrderBook::buy(string id, Order *order) {
-  // Add order with id into our hashmap.
-  // Add order to our buy queue.
+void OrderBook::buy(string id, shared_ptr<Order> order) {
+  // Add our order to the OrderBook and our buy/sell queues.
 }
 
 void buy_order(string type, int price, int quantity, string id) {
@@ -110,14 +108,12 @@ void buy_order(string type, int price, int quantity, string id) {
     subtype = subtype_t::IOC;
   }
 
+  // Create a new `Order`.
   shared_ptr<Order> ord =
       make_shared<Order>(id, order_t::BUY, subtype, price, quantity);
 
-  // Order *ord = new Order(id, order_t::BUY, subtype, price, quantity);
-
-  cout << *ord << endl;
-
-  // delete ord;
+  // Add `Order` to our OrderBook.
+  OrderBook::insert_buy(id, ord);
 }
 
 void sell_order(string type, int price, int quantity, string id) {

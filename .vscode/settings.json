@@ -13,6 +13,8 @@
     "ratio": "cpp",
     "tuple": "cpp",
     "type_traits": "cpp",
-    "utility": "cpp"
+    "utility": "cpp",
+    "__locale": "cpp",
+    "locale": "cpp"
   }
 }
