@@ -148,7 +148,7 @@ void Orderbook::print() {
 void Orderbook::debug() {
   for (auto itr = orders_.begin(); itr != orders_.end(); ++itr) {
     cout << itr->first << endl;
-    cout << itr->second << endl;
+    cout << *(itr->second) << endl;
   }
 }
 
