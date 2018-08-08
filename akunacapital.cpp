@@ -74,36 +74,39 @@ ostream &operator<<(ostream &out, Order &order) {
   return out;
 }
 
-// PriceBook data structure class holds
+// OrderBook data structure class holds
 // all our orders.
-class PriceBook final {
+class OrderBook final {
  private:
-  static unordered_map<string, shared_ptr<Order>> PriceBook_;
+  static unordered_map<string, shared_ptr<Order>> orderbook_;
   static queue<shared_ptr<Order>> buyq_;
   static queue<shared_ptr<Order>> sellq_;
 
  public:
   static void buy(string id, shared_ptr<Order> order);
   static void sell(string id, shared_ptr<Order> order);
+  static void print();
 };
 
-// Initialise our static members from the PriceBook class.
-unordered_map<string, shared_ptr<Order>> PriceBook::PriceBook_;
-queue<shared_ptr<Order>> PriceBook::buyq_;
-queue<shared_ptr<Order>> PriceBook::sellq_;
+// Initialise our static members from the OrderBook class.
+unordered_map<string, shared_ptr<Order>> OrderBook::orderbook_;
+queue<shared_ptr<Order>> OrderBook::buyq_;
+queue<shared_ptr<Order>> OrderBook::sellq_;
 
-void PriceBook::buy(string id, shared_ptr<Order> order) {
-  // Add our order to the PriceBook and our buy queue.
-  PriceBook::PriceBook_.insert(pair<string, shared_ptr<Order>>(id, order));
-  PriceBook::buyq_.push(order);
-
-  // TODO need to process the order on insertion.
+void OrderBook::buy(string id, shared_ptr<Order> order) {
+  // Add our order to the OrderBook and our buy queue.
+  OrderBook::orderbook_.insert(pair<string, shared_ptr<Order>>(id, order));
+  OrderBook::buyq_.push(order);
 }
 
-void PriceBook::sell(string id, shared_ptr<Order> order) {
-  // Add our order to the PriceBook and our sell queue.
-  PriceBook::PriceBook_.insert(pair<string, shared_ptr<Order>>(id, order));
-  PriceBook::sellq_.push(order);
+void OrderBook::sell(string id, shared_ptr<Order> order) {
+  // Add our order to the OrderBook and our sell queue.
+  OrderBook::orderbook_.insert(pair<string, shared_ptr<Order>>(id, order));
+  OrderBook::sellq_.push(order);
+}
+
+void OrderBook::print() {
+  // Print out our OrderBook.
 }
 
 void buy_order(string type, int price, int quantity, string id) {
@@ -126,8 +129,8 @@ void buy_order(string type, int price, int quantity, string id) {
   shared_ptr<Order> ord =
       make_shared<Order>(id, order_t::BUY, subtype, price, quantity);
 
-  // Add `Order` to our PriceBook.
-  PriceBook::buy(id, ord);
+  // Add `Order` to our OrderBook.
+  OrderBook::buy(id, ord);
 }
 
 void sell_order(string type, int price, int quantity, string id) {
@@ -144,8 +147,6 @@ void modify_order(string id, string type, int price, int quantity) {
 }
 
 void cancel_order(string id) { cout << id << " " << endl; }
-
-void print_orders() { cout << "Print all our orders here..." << endl; }
 
 void process_instruction(string instruction) {
   // Process instructions in sequential order.
@@ -173,7 +174,7 @@ void process_instruction(string instruction) {
     ss >> id;
     cancel_order(id);
   } else if (ins == "PRINT") {
-    print_orders();
+    OrderBook::print();
   }
 }
 
