@@ -12,6 +12,7 @@
 #include <limits>
 #include <list>
 #include <map>
+#include <memory>
 #include <numeric>
 #include <queue>
 #include <set>
@@ -25,16 +26,18 @@ using namespace std;
 
 // Function prototypes.
 void process_instruction(string instruction);
-void buy(string type, int price, int quantity, string id);
-void sell(string type, int price, int quantity, string id);
-void modify(string id, string type, int price, int quantity);
-void cancel(string id);
+void buy_order(string type, int price, int quantity, string id);
+void sell_order(string type, int price, int quantity, string id);
+void modify_order(string id, string type, int price, int quantity);
+void cancel_order(string id);
 void print_orders();
 
 enum class order_t { BUY, SELL };
 enum class subtype_t { GFD, IOC };
 
 class Order {
+  friend ostream &operator<<(ostream &out, Order &order);
+
  private:
   string id_;
   time_t time_;
@@ -48,6 +51,7 @@ class Order {
   ~Order();
 };
 
+// Order constructor.
 Order::Order(string id, order_t type, subtype_t subtype, int price,
              int quantity)
     : id_{id},
@@ -57,18 +61,66 @@ Order::Order(string id, order_t type, subtype_t subtype, int price,
       quantity_{quantity},
       time_{time(nullptr)} {}
 
-Order::~Order() {
-  // Destructor.
+// Order destructor.
+Order::~Order() {}
+
+// Output stream operator overload for the `Order` class.
+ostream &operator<<(ostream &out, Order &order) {
+  out << "OrderId: " << order.id_ << endl;
+  out << "Price: " << order.price_ << endl;
+  out << "Quantity: " << order.quantity_ << endl;
+  out << "Time: " << order.time_ << endl;
+
+  return out;
 }
 
-// Our orderbook is stored in an unordered_map.
-unordered_map<string, Order> orderbook;
+// OrderBook singleton class holds
+// all our orders.
+class OrderBook final {
+ private:
+  unordered_map<string, Order *> orderbook_;
+  queue<Order *> buyq_;
+  queue<Order *> sellq_;
 
-// Queues for holding pointers to our orders.
-queue<Order*> buyq;
-queue<Order*> sellq;
+ public:
+  static void buy(string id, Order *order);
+  static void sell(string id, Order *order);
+  static Order *get(string order_id);
+  static void print();
+};
 
-void buy(string type, int price, int quantity, string id) {
+void OrderBook::buy(string id, Order *order) {
+  // Add order with id into our hashmap.
+  // Add order to our buy queue.
+}
+
+void buy_order(string type, int price, int quantity, string id) {
+  // Input with price <= 0, quantity <= 0 or missing order ID should
+  // be ignored.
+  if ((price <= 0) || (quantity <= 0)) return;
+  if (id == "") return;
+
+  subtype_t subtype;
+
+  // cout << type << " " << price << " " << quantity << " " << id << endl;
+
+  if (type == "GFD") {
+    subtype = subtype_t::GFD;
+  } else {
+    subtype = subtype_t::IOC;
+  }
+
+  shared_ptr<Order> ord =
+      make_shared<Order>(id, order_t::BUY, subtype, price, quantity);
+
+  // Order *ord = new Order(id, order_t::BUY, subtype, price, quantity);
+
+  cout << *ord << endl;
+
+  // delete ord;
+}
+
+void sell_order(string type, int price, int quantity, string id) {
   // Input with price <= 0, quantity <= 0 or missing order ID should
   // be ignored.
   if ((price <= 0) || (quantity <= 0)) return;
@@ -77,20 +129,11 @@ void buy(string type, int price, int quantity, string id) {
   cout << type << " " << price << " " << quantity << " " << id << endl;
 }
 
-void sell(string type, int price, int quantity, string id) {
-  // Input with price <= 0, quantity <= 0 or missing order ID should
-  // be ignored.
-  if ((price <= 0) || (quantity <= 0)) return;
-  if (id == "") return;
-
-  cout << type << " " << price << " " << quantity << " " << id << endl;
-}
-
-void modify(string id, string type, int price, int quantity) {
+void modify_order(string id, string type, int price, int quantity) {
   cout << id << " " << type << " " << price << " " << quantity << endl;
 }
 
-void cancel(string id) { cout << id << " " << endl; }
+void cancel_order(string id) { cout << id << " " << endl; }
 
 void print_orders() { cout << "Print all our orders here..." << endl; }
 
@@ -109,16 +152,16 @@ void process_instruction(string instruction) {
   // TODO optimise into a switch statement.
   if (ins == "BUY") {
     ss >> type >> price >> quantity >> id;
-    buy(type, price, quantity, id);
+    buy_order(type, price, quantity, id);
   } else if (ins == "SELL") {
     ss >> type >> price >> quantity >> id;
-    sell(type, price, quantity, id);
+    sell_order(type, price, quantity, id);
   } else if (ins == "MODIFY") {
     ss >> id >> type >> price >> quantity;
-    modify(id, type, price, quantity);
+    modify_order(id, type, price, quantity);
   } else if (ins == "CANCEL") {
     ss >> id;
-    cancel(id);
+    cancel_order(id);
   } else if (ins == "PRINT") {
     print_orders();
   }
