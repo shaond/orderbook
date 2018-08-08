@@ -93,8 +93,17 @@ queue<shared_ptr<Order>> OrderBook::buyq_;
 queue<shared_ptr<Order>> OrderBook::sellq_;
 
 void OrderBook::buy(string id, shared_ptr<Order> order) {
-  // Add our order to the OrderBook and our buy/sell queues.
+  // Add our order to the OrderBook and our buy queue.
+  OrderBook::orderbook_.insert(pair<string, shared_ptr<Order>>(id, order));
   OrderBook::buyq_.push(order);
+
+  // TODO need to process the order on insertion.
+}
+
+void OrderBook::sell(string id, shared_ptr<Order> order) {
+  // Add our order to the OrderBook and our sell queue.
+  OrderBook::orderbook_.insert(pair<string, shared_ptr<Order>>(id, order));
+  OrderBook::sellq_.push(order);
 }
 
 void buy_order(string type, int price, int quantity, string id) {
