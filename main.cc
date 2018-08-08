@@ -75,6 +75,8 @@ class Orderbook final {
   static void add(string order_id, bool isgfd, int price, int quantity);
 
  public:
+  Orderbook();
+  ~Orderbook();
   static void buy(string order_id, bool isgfd, int price, int quantity);
   static void sell(string order_id, bool isgfd, int price, int quantity);
   static void modify(string order_id, bool isbuy, int price, int quantity);
@@ -83,15 +85,20 @@ class Orderbook final {
 };
 
 // Initialise our static member variables.
-map<int, int> buys_;
-map<int, int> sells_;
-unordered_map<string, Order> orders_;
+map<int, int> Orderbook::buys_;
+map<int, int> Orderbook::sells_;
+unordered_map<string, Order> Orderbook::orders_;
+
+Orderbook::~Orderbook() {
+  // Need to free all our pointers to Orders.
+}
 
 void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
-  // unique_ptr<Order> order =
-  // make_unique<Order>(order_id, true, isgfd, price, quantity);
   Order *order = new Order{order_id, true, isgfd, price, quantity};
   Orderbook::orders_.insert(make_pair(order_id, *order));
+
+  // Add our price and quantity to the buys_ map.
+  Orderbook::buys_[price] += quantity;
 }
 
 void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {}
