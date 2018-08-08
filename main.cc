@@ -139,8 +139,7 @@ void Orderbook::print() {
   }
   // Iterate over our buys.
   cout << "BUY:" << endl;
-  for (auto itr = Orderbook::buys_.rbegin(); itr != Orderbook::buys_.rend();
-       ++itr) {
+  for (auto itr = buys_.rbegin(); itr != buys_.rend(); ++itr) {
     cout << itr->first << " " << itr->second << endl;
   }
 }
