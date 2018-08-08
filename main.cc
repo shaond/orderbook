@@ -69,9 +69,10 @@ class Orderbook final {
   friend ostream &operator<<(ostream &out, Orderbook &book);
 
  private:
-  static map<int, int> buys;
-  static map<int, int> sells;
-  static unordered_map<string, Order> orders;
+  static map<int, int> buys_;
+  static map<int, int> sells_;
+  static unordered_map<string, Order> orders_;
+  static void add(string order_id, bool isgfd, int price, int quantity);
 
  public:
   static void buy(string order_id, bool isgfd, int price, int quantity);
@@ -82,11 +83,16 @@ class Orderbook final {
 };
 
 // Initialise our static member variables.
-map<int, int> buys;
-map<int, int> sells;
-unordered_map<string, Order> orders;
+map<int, int> buys_;
+map<int, int> sells_;
+unordered_map<string, Order> orders_;
 
-void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {}
+void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
+  // unique_ptr<Order> order =
+  // make_unique<Order>(order_id, true, isgfd, price, quantity);
+  Order *order = new Order{order_id, true, isgfd, price, quantity};
+  Orderbook::orders_.insert(make_pair(order_id, *order));
+}
 
 void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {}
 
