@@ -70,7 +70,7 @@ class Orderbook final {
  private:
   static map<int, int> buys_;
   static map<int, int> sells_;
-  static unordered_map<string, Order> orders_;
+  static unordered_map<string, shared_ptr<Order>> orders_;
   static void add(string order_id, bool isgfd, int price, int quantity);
 
  public:
@@ -87,23 +87,32 @@ class Orderbook final {
 // Initialise our static member variables.
 map<int, int> Orderbook::buys_;
 map<int, int> Orderbook::sells_;
-unordered_map<string, Order> Orderbook::orders_;
+unordered_map<string, shared_ptr<Order>> Orderbook::orders_;
 
 Orderbook::~Orderbook() {
   // Need to free all our pointers to Orders.
 }
 
 void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
-  Order *order = new Order{order_id, true, isgfd, price, quantity};
-  Orderbook::orders_.insert(make_pair(order_id, *order));
+  // Order *order = new Order{order_id, true, isgfd, price, quantity};
+  // Orderbook::orders_.insert(make_pair(order_id, *order));
+  shared_ptr<Order> order =
+      make_shared<Order>(order_id, true, isgfd, price, quantity);
+
+  Orderbook::orders_.insert(make_pair(order_id, order));
 
   // Add our price and quantity to the buys_ map.
   Orderbook::buys_[price] += quantity;
 }
 
 void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
-  Order *order = new Order{order_id, false, isgfd, price, quantity};
-  Orderbook::orders_.insert(make_pair(order_id, *order));
+  // Order *order = new Order{order_id, false, isgfd, price, quantity};
+  // Orderbook::orders_.insert(make_pair(order_id, *order));
+
+  shared_ptr<Order> order =
+      make_shared<Order>(order_id, true, isgfd, price, quantity);
+
+  Orderbook::orders_.insert(make_pair(order_id, order));
 
   // Add our price to the sells_ map.
   Orderbook::sells_[price] += quantity;
@@ -112,12 +121,12 @@ void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
 void Orderbook::modify(string order_id, bool isbuy, int price, int quantity) {}
 
 void Orderbook::cancel(string order_id) {
-  Order ord = orders_.find(order_id)->second;
+  shared_ptr<Order> ord = orders_.find(order_id)->second;
 
-  if (ord.isbuy_) {
-    buys_[ord.price_] -= ord.quantity_;
+  if (ord->isbuy_) {
+    buys_[ord->price_] -= ord->quantity_;
   } else {
-    sells_[ord.price_] -= ord.quantity_;
+    sells_[ord->price_] -= ord->quantity_;
   }
 
   orders_.erase(order_id);
