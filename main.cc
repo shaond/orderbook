@@ -76,12 +76,12 @@ class Orderbook final {
  public:
   Orderbook();
   ~Orderbook();
-  static void buy(string order_id, bool isgfd, int price, int quantity);
-  static void sell(string order_id, bool isgfd, int price, int quantity);
-  static void modify(string order_id, bool isbuy, int price, int quantity);
-  static void cancel(string order_id);
-  static void print();
-  static void debug();
+  static void Buy(string order_id, bool isgfd, int price, int quantity);
+  static void Sell(string order_id, bool isgfd, int price, int quantity);
+  static void Modify(string order_id, bool isbuy, int price, int quantity);
+  static void Cancel(string order_id);
+  static void Print();
+  static void Debug();
 };
 
 // Initialise our static member variables.
@@ -93,7 +93,7 @@ Orderbook::~Orderbook() {
   // Need to free all our pointers to Orders.
 }
 
-void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
+void Orderbook::Buy(string order_id, bool isgfd, int price, int quantity) {
   // Order *order = new Order{order_id, true, isgfd, price, quantity};
   // Orderbook::orders_.insert(make_pair(order_id, *order));
   shared_ptr<Order> order =
@@ -105,7 +105,7 @@ void Orderbook::buy(string order_id, bool isgfd, int price, int quantity) {
   Orderbook::buys_[price] += quantity;
 }
 
-void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
+void Orderbook::Sell(string order_id, bool isgfd, int price, int quantity) {
   // Order *order = new Order{order_id, false, isgfd, price, quantity};
   // Orderbook::orders_.insert(make_pair(order_id, *order));
 
@@ -118,9 +118,11 @@ void Orderbook::sell(string order_id, bool isgfd, int price, int quantity) {
   Orderbook::sells_[price] += quantity;
 }
 
-void Orderbook::modify(string order_id, bool isbuy, int price, int quantity) {}
+void Orderbook::Modify(string order_id, bool isbuy, int price, int quantity) {
+  shared_ptr<Order> ord = orders_.find(order_id)->second;
+}
 
-void Orderbook::cancel(string order_id) {
+void Orderbook::Cancel(string order_id) {
   shared_ptr<Order> ord = orders_.find(order_id)->second;
 
   if (ord->isbuy_) {
@@ -132,7 +134,7 @@ void Orderbook::cancel(string order_id) {
   orders_.erase(order_id);
 }
 
-void Orderbook::print() {
+void Orderbook::Print() {
   cout << "SELL:" << endl;
   for (auto itr = sells_.rbegin(); itr != sells_.rend(); ++itr) {
     cout << itr->first << " " << itr->second << endl;
@@ -144,10 +146,11 @@ void Orderbook::print() {
   }
 }
 
-void Orderbook::debug() {
+void Orderbook::Debug() {
   for (auto itr = orders_.begin(); itr != orders_.end(); ++itr) {
     cout << itr->first << endl;
     cout << *(itr->second) << endl;
+    cout << itr->second.use_count() << endl;
   }
 }
 
@@ -171,22 +174,22 @@ void ProcessInstruction(string instruction) {
   if (ins == "BUY") {
     ss >> type >> price >> quantity >> id;
     if (type == "IOC") isgfd = false;
-    Orderbook::buy(id, isgfd, price, quantity);
+    Orderbook::Buy(id, isgfd, price, quantity);
   } else if (ins == "SELL") {
     ss >> type >> price >> quantity >> id;
     if (type == "IOC") isgfd = false;
-    Orderbook::sell(id, isgfd, price, quantity);
+    Orderbook::Sell(id, isgfd, price, quantity);
   } else if (ins == "MODIFY") {
     ss >> id >> type >> price >> quantity;
     if (type == "SELL") isbuy = false;
-    Orderbook::modify(id, isbuy, price, quantity);
+    Orderbook::Modify(id, isbuy, price, quantity);
   } else if (ins == "CANCEL") {
     ss >> id;
-    Orderbook::cancel(id);
+    Orderbook::Cancel(id);
   } else if (ins == "PRINT") {
-    Orderbook::print();
+    Orderbook::Print();
   } else if (ins == "DEBUG") {
-    Orderbook::debug();
+    Orderbook::Debug();
   }
 }
 
